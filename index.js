@@ -111,7 +111,7 @@ bot.on("message", async (msg) => {
             });
 
             fs.unlinkSync(videoPath); // Videoni o‘chiramiz
-        });
+        })
 
     } catch (error) {
         console.error("Video yuklashda xatolik:", error);
