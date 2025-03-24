@@ -139,6 +139,6 @@ app.get("/", (req, res) => {
     res.send("Bot is running...");
 });
 
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(5000, "0.0.0.0", () => {
     console.log(`Server running on port ${PORT}`);
 });
