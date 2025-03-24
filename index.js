@@ -1,9 +1,12 @@
 const TelegramBot = require('node-telegram-bot-api');
+const express = require("express");
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
 const bot = new TelegramBot('7913269120:AAHyaBpD1G3NsrI7fKLdS3CNtoMocAUQ3L8', { polling: true });
+
+const app = express();
 const CHANNEL_USERNAME = "@Asrorbek_blo"; // Kanal username (t.me/ ni olib tashlang)
 
 // ✅ Obuna tekshirish funksiyasi
@@ -133,3 +136,11 @@ const downloadInsta = async (insUrl = null) => {
 
     return await axios.request(options);
 };
+
+app.get("/", (req, res) => {
+    res.send("Bot is running...");
+  });
+  
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on port ${PORT}`);
+  });
