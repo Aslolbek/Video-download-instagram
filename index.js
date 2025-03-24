@@ -27,7 +27,7 @@ bot.onText(/\/start/, async (msg) => {
     const userId = msg.from.id;
 
     const isMember = await checkSubscription(chatId, userId);
-    
+
     if (!isMember) {
         return bot.sendMessage(chatId, "📢 <b>Botdan foydalanish uchun avval kanalga obuna bo‘ling!</b>", {
             parse_mode: "HTML",
@@ -49,7 +49,7 @@ bot.on("callback_query", async (query) => {
     const userId = query.from.id;
 
     const isMember = await checkSubscription(chatId, userId);
-    
+
     if (isMember) {
         bot.sendMessage(chatId, "✅ Rahmat! Siz obuna bo‘lgansiz. Endi botdan foydalanishingiz mumkin.", { parse_mode: "HTML" });
     } else {
@@ -67,7 +67,7 @@ bot.on("message", async (msg) => {
     if (!messageText.startsWith("http")) return;
 
     const isMember = await checkSubscription(chatId, userId);
-    
+
     if (!isMember) {
         return bot.sendMessage(chatId, "📢 <b>Botdan foydalanish uchun avval bizning kanalga obuna bo‘ling!</b>", {
             parse_mode: "HTML",
@@ -89,10 +89,9 @@ bot.on("message", async (msg) => {
             return bot.sendMessage(chatId, "❌ Video topilmadi yoki yuklab bo‘lmadi.");
         }
 
-    
+
 
         const videoUrl = response.data.download_url;
-        console.log(videoUrl)
         const username = response.data.author?.username || "Noma'lum";
 
         const caption = `📹 <b>Instagram-dan yuklangan video!</b>\n\n👤 <b>Muallif:</b> <a href="https://www.instagram.com/${username}">@${username}</a>\n`;
@@ -117,7 +116,6 @@ bot.on("message", async (msg) => {
         })
 
     } catch (error) {
-        console.error("Video yuklashda xatolik:", error);
         bot.sendMessage(chatId, "❌ Video yuklashda yoki jo‘natishda xatolik bor.");
     }
 });
@@ -139,8 +137,8 @@ const downloadInsta = async (insUrl = null) => {
 
 app.get("/", (req, res) => {
     res.send("Bot is running...");
-  });
-  
-  app.listen(PORT, "0.0.0.0", () => {
+});
+
+app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on port ${PORT}`);
-  });
+});
