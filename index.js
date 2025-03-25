@@ -3,7 +3,6 @@ const express = require("express");
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
-
 const bot = new TelegramBot('7913269120:AAHyaBpD1G3NsrI7fKLdS3CNtoMocAUQ3L8', { polling: true });
 
 const app = express();
@@ -25,9 +24,9 @@ async function checkSubscription(chatId, userId) {
 bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
-
+    
     const isMember = await checkSubscription(chatId, userId);
-
+    
     if (!isMember) {
         return bot.sendMessage(chatId, "📢 <b>Botdan foydalanish uchun avval kanalga obuna bo‘ling!</b>", {
             parse_mode: "HTML",
@@ -39,7 +38,7 @@ bot.onText(/\/start/, async (msg) => {
             }
         });
     }
-
+    
     bot.sendMessage(chatId, `👋 Assalomu alaykum, ${msg.from.first_name}! Botga xush kelibsiz!`, { parse_mode: "HTML" });
 });
 
@@ -47,9 +46,9 @@ bot.onText(/\/start/, async (msg) => {
 bot.on("callback_query", async (query) => {
     const chatId = query.message.chat.id;
     const userId = query.from.id;
-
+    
     const isMember = await checkSubscription(chatId, userId);
-
+    
     if (isMember) {
         bot.sendMessage(chatId, "✅ Rahmat! Siz obuna bo‘lgansiz. Endi botdan foydalanishingiz mumkin.", { parse_mode: "HTML" });
     } else {
@@ -62,12 +61,12 @@ bot.on("message", async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const messageText = msg.text;
-
+    
     // Agar foydalanuvchi `/start` yoki boshqa buyruq yozgan bo‘lsa, hech narsa qilmaymiz
     if (!messageText.startsWith("http")) return;
 
     const isMember = await checkSubscription(chatId, userId);
-
+    
     if (!isMember) {
         return bot.sendMessage(chatId, "📢 <b>Botdan foydalanish uchun avval bizning kanalga obuna bo‘ling!</b>", {
             parse_mode: "HTML",
@@ -79,17 +78,17 @@ bot.on("message", async (msg) => {
             }
         });
     }
-
+    
     try {
         bot.sendMessage(chatId, "⏳ Video yuklanmoqda, biroz kuting...");
-
+        
         const response = await downloadInsta(messageText);
-
+        
         if (!response.data || !response.data.download_url || response.data.download_url.length === 0) {
             return bot.sendMessage(chatId, "❌ Video topilmadi yoki yuklab bo‘lmadi.");
         }
 
-
+        
 
         const videoUrl = response.data.download_url;
         const username = response.data.author?.username || "Noma'lum";
@@ -99,22 +98,22 @@ bot.on("message", async (msg) => {
         if (!videoUrl) {
             return bot.sendMessage(chatId, "❌ Video URL noto‘g‘ri.");
         }
-
+        
         const videoPath = path.join(__dirname, `video_${chatId}.mp4`);
         const writer = fs.createWriteStream(videoPath);
-
+        
         const videoResponse = await axios({ url: videoUrl, method: 'GET', responseType: 'stream' });
         videoResponse.data.pipe(writer);
-
+        
         writer.on('finish', async () => {
             await bot.sendVideo(chatId, fs.createReadStream(videoPath), {
                 caption: caption,
                 parse_mode: "HTML",
             });
-
+            
             fs.unlinkSync(videoPath); // Videoni o‘chiramiz
         })
-
+        
     } catch (error) {
         bot.sendMessage(chatId, "❌ Video yuklashda yoki jo‘natishda xatolik bor.");
     }
@@ -131,13 +130,15 @@ const downloadInsta = async (insUrl = null) => {
             'x-rapidapi-host': 'instagram-downloader36.p.rapidapi.com'
         }
     };
-
+    
     return await axios.request(options);
 };
 
 app.get("/", (req, res) => {
     res.send("Bot is running...");
 });
+
+const PORT = process.env.PORT || 5000; 
 
 app.listen(5000, "0.0.0.0", () => {
     console.log(`Server running on port 5000`);
